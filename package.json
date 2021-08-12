@@ -1,0 +1,13 @@
+{
+  "name": "inject",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "injection": "^1.8.6",
+    "inversify": "^5.0.5",
+    "is-type-of": "^1.2.1",
+    "reflect-metadata": "^0.1.13",
+    "typescript": "^4.1.3"
+  }
+}
