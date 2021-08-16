@@ -1,15 +1,15 @@
 import 'reflect-metadata';
 import { MetaData } from './metaData';
+import { Ioc } from "./constants";
+import camelcase from "camelcase";
 
-const IOC_PROVIDE = 'ioc:provide';
-
-const provide = (identifier?: string, args?: any[], $scope?: string | Symbol) => {
+const Provide = (identifier?: string, args?: any[], $scope?: string) => {
   return (target: any) => {
-    if (Reflect.hasOwnMetadata('ioc:provide', target)) {
-      const metaData: MetaData = Reflect.getMetadata(IOC_PROVIDE, target);
+    if (Reflect.hasOwnMetadata(Ioc.PROVIDE, target)) {
+      const metaData: MetaData = Reflect.getMetadata(Ioc.PROVIDE, target);
       const { scopeMap } = metaData;
 
-      metaData.setParam(identifier || target.name, args);
+      metaData.setParam(camelcase(identifier || target.name), args);
 
       if (!$scope || scopeMap.has($scope)) {
         throw Error('重复绑定');
@@ -23,19 +23,19 @@ const provide = (identifier?: string, args?: any[], $scope?: string | Symbol) =>
 
       // 覆盖之前的 metaData 
       Reflect.defineMetadata(
-        IOC_PROVIDE,
+        Ioc.PROVIDE,
         metaData,
         target
       )
 
     } else {
       if (!identifier) {
-        identifier = target.name;
+        identifier = camelcase(target.name);
       }
 
       Reflect.defineMetadata(
-        IOC_PROVIDE,
-        new MetaData(identifier, args, $scope),
+        Ioc.PROVIDE,
+        new MetaData(camelcase(identifier), args, $scope),
         target
       );
     }
@@ -44,4 +44,4 @@ const provide = (identifier?: string, args?: any[], $scope?: string | Symbol) =>
   }
 }
 
-export { provide };
+export { Provide };

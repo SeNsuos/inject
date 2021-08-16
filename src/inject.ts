@@ -1,26 +1,31 @@
 import 'reflect-metadata';
+import { Ioc } from "./constants";
+import camelcase from "camelcase";
 
-const IOC_INJECT = 'ioc:inject';
-
-const inject = (identifier?: string, $scope?: string | Symbol) => {
+const Inject = (identifier?: string, $scope?: string) => {
   return (target: any, propertyKey: string) => {
     const annotationTarget = target.constructor;
     let props = {};
-    if (Reflect.hasOwnMetadata(IOC_INJECT, annotationTarget)) {
-      props = Reflect.getMetadata(IOC_INJECT, annotationTarget);
+    // TODO 是否可以先从 Provide 中取?
+    // if (Reflect.hasOwnMetadata(Ioc.PROVIDE, annotationTarget)) {
+    //   props = Reflect.getMetadata(Ioc.PROVIDE, annotationTarget);
+    // } else
+    if (Reflect.hasOwnMetadata(Ioc.INJECT, annotationTarget)) {
+      props = Reflect.getMetadata(Ioc.INJECT, annotationTarget);
     }
+    const t = Reflect.getMetadata(Ioc.TYPE, target, propertyKey);
     if (identifier) {
       props[identifier] = {
         value: identifier,
       };
     } else {
       props[propertyKey] = {
-        value: propertyKey
+        value: camelcase(t?.name ?? propertyKey)
       }
     }
 
-    Reflect.defineMetadata(IOC_INJECT, props, annotationTarget);
+    Reflect.defineMetadata(Ioc.INJECT, props, annotationTarget);
   }
 }
 
-export { inject }
+export { Inject }

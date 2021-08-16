@@ -1,16 +1,34 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
     "module": "commonjs",
+    "lib": [
+      "esnext",
+      "dom"
+    ],
+    "allowJs": true,
+    "target": "es2015",
+    "jsx": "preserve",
+    "jsxFactory": "createElement",
     "moduleResolution": "node",
+    "alwaysStrict": true,
+    "sourceMap": false,
+    "allowUnusedLabels": true,
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "removeComments": false,
+    "preserveConstEnums": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "inlineSourceMap":true,
-    "noImplicitThis": true,
-    "stripInternal": true,
-    "pretty": true,
-    "declaration": true,
-    "outDir": "dist",
-    "lib": ["ES2018", "dom"]
-  }
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitAny": false,
+    "noImplicitThis": false,
+    "resolveJsonModule": true,
+    "outDir": "lib",
+    "baseUrl": ".",
+    "declaration": true
+  },
+  "include": ["src/**/*.ts", "test/comment.test.ts"],
+  "exclude": ["node_modules", "lib"],
 }
