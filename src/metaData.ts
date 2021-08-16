@@ -1,13 +1,12 @@
-import { id } from "inversify";
 import { Identifier } from "./interface";
 
 
 class MetaData {
   private _identifier?: Identifier;
   private _args: any[];
-  private _scopeMap: Map<string | Symbol, { identifier: Identifier, args: any[] }>
+  private _scopeMap: Map<string, { identifier: Identifier, args: any[] }>
 
-  constructor(identifier?: Identifier, args?: any[], $scope?: string | Symbol) {
+  constructor(identifier?: Identifier, args?: any[], $scope?: string) {
     this._identifier = identifier;
     this._args = args;
     if ($scope) {

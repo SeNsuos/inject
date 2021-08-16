@@ -1,8 +1,9 @@
 import 'reflect-metadata';
+import { Ioc } from "./constants";
+import camelcase from "camelcase";
 
 interface BaseContainer {
-  bind<T>(target: T, args?: any[]): void;
-  bind<T>(identifier: string | Symbol, target: T, args?: any[]): void;
+  bind<T>(target: Newable<T>, identifier: string, args?: any[]): void;
 }
 
 interface BindValue {
@@ -10,35 +11,34 @@ interface BindValue {
   args: any[]
 }
 
-class Container implements BaseContainer {
-  private dependMap = new Map<string | Symbol, BindValue>();
+type Newable<T> = new (...args: any[]) => T;
 
-  bind<T>(target: T, args?: any[]): void;
-  bind<T>(identifier: string | Symbol, target: T, args?: any[]): void;
-  bind<T>(identifier: string | Symbol, target: T, args?: any[]): void {
+class Container implements BaseContainer {
+  private dependMap = new Map<string, BindValue>();
+
+  bind<T>(target: Newable<T>, identifier?: string, args: any[] = []): void {
     if (identifier) {
-      this.dependMap.set(identifier, {
+      this.dependMap.set(camelcase(identifier), {
         clazz: target,
         args
       });
     } else {
-      // @ts-ignore
-      this.dependMap.set(target.name, {
+      this.dependMap.set(camelcase(target.name), {
         clazz: target,
         args
       })
     }
   }
 
-  get<T>(identifier: string | Symbol, $scope?: string | Symbol): T {
+  get<T>(identifier: string, $scope?: string | Symbol): T {
     if (!this.dependMap.has(identifier)) {
-      throw Error('not exit');
+      throw Error(`identifier ${identifier} not exit`);
     }
 
     const bindValue = this.dependMap.get(identifier);
     const { clazz, args } = bindValue;
 
-    const props = Reflect.getMetadata('ioc:inject', clazz);
+    const props = Reflect.getMetadata(Ioc.INJECT, clazz);
     const inst = Reflect.construct(clazz, args);
 
     for (let prop in props) {
@@ -46,7 +46,7 @@ class Container implements BaseContainer {
       // 递归获取注入的对象
       inst[prop] = this.get(identifier);
     }
-    return inst;
+    return inst as T;
   }
 }
 
